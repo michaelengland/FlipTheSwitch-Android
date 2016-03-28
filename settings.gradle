@@ -1,1 +1,2 @@
+include ':fliptheswitch'
 include ':fliptheswitch-example'
