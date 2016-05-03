@@ -1,2 +1,2 @@
-include ':fliptheswitch'
+include ':fliptheswitch-android'
 include ':fliptheswitch-example'
