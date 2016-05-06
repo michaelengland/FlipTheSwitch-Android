@@ -1,18 +1,18 @@
 buildscript {
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.1.0'
+        classpath deps.androidPlugin
     }
 }
 
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    compileSdkVersion consts.compileSdkVersion
+    buildToolsVersion consts.buildToolsVersion
 
     defaultConfig {
-        minSdkVersion 15
-        targetSdkVersion 23
+        minSdkVersion consts.minSdkVersion
+        targetSdkVersion consts.targetSdkVersion
         versionCode 1
         versionName "1.0"
     }
@@ -25,8 +25,7 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':fliptheswitch-core')
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.robolectric:robolectric:3.1-rc1'
+    testCompile deps.junit
+    testCompile deps.robolectric
 }
