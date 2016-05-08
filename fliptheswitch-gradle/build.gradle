@@ -10,4 +10,5 @@ dependencies {
     compile deps.javaPoet
     compile deps.androidPlugin
     testCompile deps.junit
+    testCompile gradleTestKit()
 }
