@@ -1,0 +1,9 @@
+plugins {
+    id 'com.michaelengland.fliptheswitch'
+}
+
+task helloWorld {
+    doLast {
+        println 'Hello world!'
+    }
+}
