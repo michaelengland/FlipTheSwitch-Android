@@ -22,7 +22,7 @@ public class FixturesTest {
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     @Test
-    public void testSimple() throws Exception {
+    public void aSimpleProjectSetup_generatesCorrectFeaturesFile() throws Exception {
         setupFromFixtureName("simple");
 
         BuildResult result = gradleBuild();
@@ -43,10 +43,15 @@ public class FixturesTest {
 
     private void setupFromFixtureName(final String fixtureName) throws Exception {
         FileUtils.copyDirectory(folderForFixtureName(fixtureName), temporaryFolder.getRoot());
+        FileUtils.copyDirectory(sourceFolder(), temporaryFolder.newFolder("src"));
     }
 
     private File folderForFixtureName(final String fixtureName) throws Exception {
-        return new File(new File(Resources.getResource(fixtureName).toURI()), "fixture");
+        return new File(Resources.getResource("fixtures/" + fixtureName).toURI());
+    }
+
+    private File sourceFolder() throws Exception {
+        return new File(Resources.getResource("src").toURI());
     }
 
     private List<File> pluginClasspaths() throws Exception {
@@ -61,8 +66,8 @@ public class FixturesTest {
 
     private List<String> gradleArguments() {
         List<String> gradleArguments = new ArrayList<>();
-        gradleArguments.add("helloWorld");
-        gradleArguments.add("--quiet");
+        gradleArguments.add("clean");
+        gradleArguments.add("build");
         gradleArguments.add("--stacktrace");
         return gradleArguments;
     }

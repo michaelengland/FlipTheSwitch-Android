@@ -22,7 +22,7 @@ public class FeaturesWriterTest {
 
     @Before
     public void setup() throws Exception {
-        URL url = Resources.getResource("com/github/michaelengland/fliptheswitch/Features.java");
+        URL url = Resources.getResource("expected/Features.java");
         expectedGeneratedFeaturesFile = Resources.toString(url, Charsets.UTF_8);
         List<Feature> defaultFeatures = new ArrayList<>();
         defaultFeatures.add(new Feature("some_feature", "Some simple enabled feature", true));
