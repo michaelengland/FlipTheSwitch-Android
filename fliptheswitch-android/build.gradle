@@ -5,6 +5,18 @@ buildscript {
 }
 
 apply plugin: 'com.android.library'
+apply plugin: 'maven'
+
+group = GROUP
+version = VERSION_NAME
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: "file://$System.env.HOME/.m2/repository/")
+        }
+    }
+}
 
 android {
     compileSdkVersion consts.compileSdkVersion

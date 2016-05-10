@@ -1,4 +1,8 @@
 apply plugin: 'java'
+apply plugin: 'maven'
+
+group = GROUP
+version = VERSION_NAME
 
 sourceCompatibility = consts.sourceCompatibility
 targetCompatibility = consts.targetCompatibility
