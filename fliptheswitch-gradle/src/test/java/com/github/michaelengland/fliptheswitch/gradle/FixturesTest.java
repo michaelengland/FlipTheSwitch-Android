@@ -4,7 +4,6 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
 import org.apache.commons.io.FileUtils;
-import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
 import org.junit.Rule;
 import org.junit.Test;
@@ -14,7 +13,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;
 
 public class FixturesTest {
@@ -25,13 +24,14 @@ public class FixturesTest {
     public void aSimpleProjectSetup_generatesCorrectFeaturesFile() throws Exception {
         setupFromFixtureName("simple");
 
-        BuildResult result = gradleBuild();
-
-        assertThat(result.getOutput(), equalTo("Hello world!\n"));
+        gradleRunner().build();
     }
 
-    private BuildResult gradleBuild() throws Exception {
-        return gradleRunner().build();
+    @Test
+    public void aProjectSetupWithoutAndroid_throwsError() throws Exception {
+        setupFromFixtureName("no-android-yet");
+
+        assertThat(gradleRunner().buildAndFail().getOutput(), containsString("You must apply the Android plugin before applying the fliptheswitch plugin"));
     }
 
     private GradleRunner gradleRunner() throws Exception {
@@ -66,8 +66,6 @@ public class FixturesTest {
 
     private List<String> gradleArguments() {
         List<String> gradleArguments = new ArrayList<>();
-        gradleArguments.add("clean");
-        gradleArguments.add("build");
         gradleArguments.add("--stacktrace");
         return gradleArguments;
     }

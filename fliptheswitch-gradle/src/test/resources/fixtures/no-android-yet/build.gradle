@@ -1,0 +1,15 @@
+plugins {
+    id 'com.github.michaelengland.fliptheswitch'
+}
+
+features {
+    defaultConfig {
+        someFeature {
+            description = 'Some simple enabled feature'
+            enabled = true
+        }
+        anotherFeature {
+            description = 'Another disabled feature'
+        }
+    }
+}
