@@ -1,4 +1,4 @@
-package com.michaelengland.fliptheswitch.gradle;
+package com.github.michaelengland.fliptheswitch.gradle;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;

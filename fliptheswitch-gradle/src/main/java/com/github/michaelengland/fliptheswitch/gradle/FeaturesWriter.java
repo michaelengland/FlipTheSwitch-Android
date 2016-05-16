@@ -1,4 +1,4 @@
-package com.michaelengland.fliptheswitch.gradle;
+package com.github.michaelengland.fliptheswitch.gradle;
 
 import com.github.michaelengland.fliptheswitch.Feature;
 import com.google.common.base.CaseFormat;

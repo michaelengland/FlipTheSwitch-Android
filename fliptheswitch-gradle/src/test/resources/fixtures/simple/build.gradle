@@ -1,6 +1,6 @@
 plugins {
     id 'com.android.application'
-    id 'com.michaelengland.fliptheswitch'
+    id 'com.github.michaelengland.fliptheswitch'
 }
 
 android {

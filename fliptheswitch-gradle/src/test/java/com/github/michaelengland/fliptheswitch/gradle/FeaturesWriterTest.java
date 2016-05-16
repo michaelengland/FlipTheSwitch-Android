@@ -3,7 +3,6 @@ package com.github.michaelengland.fliptheswitch.gradle;
 import com.github.michaelengland.fliptheswitch.Feature;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
-import com.michaelengland.fliptheswitch.gradle.FeaturesWriter;
 
 import org.junit.Before;
 import org.junit.Test;

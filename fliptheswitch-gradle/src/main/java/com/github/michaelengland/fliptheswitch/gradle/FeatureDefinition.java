@@ -1,4 +1,4 @@
-package com.michaelengland.fliptheswitch.gradle;
+package com.github.michaelengland.fliptheswitch.gradle;
 
 public class FeatureDefinition {
     private final String name;

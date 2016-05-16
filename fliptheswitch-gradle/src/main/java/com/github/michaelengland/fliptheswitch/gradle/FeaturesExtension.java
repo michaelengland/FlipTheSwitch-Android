@@ -1,4 +1,4 @@
-package com.michaelengland.fliptheswitch.gradle;
+package com.github.michaelengland.fliptheswitch.gradle;
 
 import org.gradle.api.Action;
 import org.gradle.api.NamedDomainObjectContainer;
