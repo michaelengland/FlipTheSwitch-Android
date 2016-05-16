@@ -10,10 +10,12 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 public class FixturesTest {
@@ -24,14 +26,18 @@ public class FixturesTest {
     public void aSimpleProjectSetup_generatesCorrectFeaturesFile() throws Exception {
         setupFromFixtureName("simple");
 
-        gradleRunner().build();
+        gradleRunner().build().getOutput();
+
+        assertThat(generatedFile("debug"), is(expectedFile()));
+        assertThat(generatedFile("release"), is(expectedFile()));
     }
 
     @Test
     public void aProjectSetupWithoutAndroid_throwsError() throws Exception {
         setupFromFixtureName("no-android-yet");
 
-        assertThat(gradleRunner().buildAndFail().getOutput(), containsString("You must apply the Android plugin before applying the fliptheswitch plugin"));
+        assertThat(gradleRunner().buildAndFail().getOutput(),
+                containsString("You must apply the Android App plugin before applying the fliptheswitch plugin"));
     }
 
     private GradleRunner gradleRunner() throws Exception {
@@ -48,6 +54,16 @@ public class FixturesTest {
 
     private File folderForFixtureName(final String fixtureName) throws Exception {
         return new File(Resources.getResource("fixtures/" + fixtureName).toURI());
+    }
+
+    private String generatedFile(final String variant) throws Exception {
+        return FileUtils.readFileToString(new File(temporaryFolder.getRoot() + "/build/generated/source/buildConfig/" +
+                variant + "/com/github/michaelengland/fliptheswitch/Features.java"));
+    }
+
+    private String expectedFile() throws Exception {
+        URL url = Resources.getResource("expected/Features.java");
+        return Resources.toString(url, Charsets.UTF_8);
     }
 
     private File sourceFolder() throws Exception {

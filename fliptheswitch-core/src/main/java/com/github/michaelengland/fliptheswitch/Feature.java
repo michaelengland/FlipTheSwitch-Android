@@ -43,4 +43,13 @@ public class Feature {
         result = 31 * result + (enabled ? 1 : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "Feature{" +
+                "name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", enabled=" + enabled +
+                '}';
+    }
 }

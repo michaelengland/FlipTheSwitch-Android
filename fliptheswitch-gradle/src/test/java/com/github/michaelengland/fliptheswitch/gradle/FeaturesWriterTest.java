@@ -24,8 +24,8 @@ public class FeaturesWriterTest {
         URL url = Resources.getResource("expected/Features.java");
         expectedGeneratedFeaturesFile = Resources.toString(url, Charsets.UTF_8);
         List<Feature> defaultFeatures = new ArrayList<>();
-        defaultFeatures.add(new Feature("some_feature", "Some simple enabled feature", true));
-        defaultFeatures.add(new Feature("another_feature", "Another disabled feature", false));
+        defaultFeatures.add(new Feature("anotherFeature", "Another disabled feature", false));
+        defaultFeatures.add(new Feature("someFeature", "Some simple enabled feature", true));
         featuresWriter = new FeaturesWriter(defaultFeatures);
     }
 

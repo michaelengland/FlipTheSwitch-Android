@@ -14,4 +14,8 @@ public class FeaturesExtension {
     public void defaultConfig(final Action<NamedDomainObjectContainer<FeatureDefinition>> action) {
         action.execute(defaultConfig);
     }
+
+    public NamedDomainObjectContainer<FeatureDefinition> defaultConfig() {
+        return defaultConfig;
+    }
 }

@@ -9,14 +9,15 @@ import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeSpec;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.lang.model.element.Modifier;
 
 public class FeaturesWriter {
-    private List<Feature> defaultFeatures;
+    private Collection<Feature> defaultFeatures;
 
-    public FeaturesWriter(final List<Feature> defaultFeatures) {
+    public FeaturesWriter(final Collection<Feature> defaultFeatures) {
         this.defaultFeatures = defaultFeatures;
     }
 
@@ -68,7 +69,7 @@ public class FeaturesWriter {
                 .addStatement("$T defaultFeatures = new $T<>()", listOfFeaturesTypeName(), ArrayList.class);
         for (Feature feature : defaultFeatures) {
             defaultFeaturesMethodBuilder.addStatement("defaultFeatures.add(new $T($S, $S, $L))", Feature.class,
-                    feature.getName(), feature.getDescription(), feature.isEnabled());
+                    snakeCaseFeatureName(feature.getName()), feature.getDescription(), feature.isEnabled());
         }
         return defaultFeaturesMethodBuilder.addStatement("return defaultFeatures")
                 .build();
@@ -78,21 +79,22 @@ public class FeaturesWriter {
         return MethodSpec.methodBuilder("is" + camelCaseFeatureName(feature) + "Enabled")
                 .addModifiers(Modifier.PUBLIC)
                 .returns(boolean.class)
-                .addStatement("return $N.isFeatureEnabled($S)", "flipTheSwitch", feature.getName())
+                .addStatement("return $N.isFeatureEnabled($S)", "flipTheSwitch",
+                        snakeCaseFeatureName(feature.getName()))
                 .build();
     }
 
     private MethodSpec enableFeatureMethod(final Feature feature) {
         return MethodSpec.methodBuilder("enable" + camelCaseFeatureName(feature))
                 .addModifiers(Modifier.PUBLIC)
-                .addStatement("$N.enableFeature($S)", "flipTheSwitch", feature.getName())
+                .addStatement("$N.enableFeature($S)", "flipTheSwitch", snakeCaseFeatureName(feature.getName()))
                 .build();
     }
 
     private MethodSpec disableFeatureMethod(final Feature feature) {
         return MethodSpec.methodBuilder("disable" + camelCaseFeatureName(feature))
                 .addModifiers(Modifier.PUBLIC)
-                .addStatement("$N.disableFeature($S)", "flipTheSwitch", feature.getName())
+                .addStatement("$N.disableFeature($S)", "flipTheSwitch", snakeCaseFeatureName(feature.getName()))
                 .build();
     }
 
@@ -100,19 +102,24 @@ public class FeaturesWriter {
         return MethodSpec.methodBuilder("set" + camelCaseFeatureName(feature) + "Enabled")
                 .addModifiers(Modifier.PUBLIC)
                 .addParameter(boolean.class, "enabled", Modifier.FINAL)
-                .addStatement("$N.setFeatureEnabled($S, $N)", "flipTheSwitch", feature.getName(), "enabled")
+                .addStatement("$N.setFeatureEnabled($S, $N)", "flipTheSwitch", snakeCaseFeatureName(feature.getName()),
+                        "enabled")
                 .build();
     }
 
     private MethodSpec resetFeatureMethod(final Feature feature) {
         return MethodSpec.methodBuilder("reset" + camelCaseFeatureName(feature))
                 .addModifiers(Modifier.PUBLIC)
-                .addStatement("$N.resetFeature($S)", "flipTheSwitch", feature.getName())
+                .addStatement("$N.resetFeature($S)", "flipTheSwitch", snakeCaseFeatureName(feature.getName()))
                 .build();
     }
 
+    private String snakeCaseFeatureName(final String string) {
+        return CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, string);
+    }
+
     private String camelCaseFeatureName(final Feature feature) {
-        return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, feature.getName());
+        return CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_CAMEL, feature.getName());
     }
 
     private MethodSpec resetAllFeaturesMethod() {

@@ -11,7 +11,7 @@ public class FeatureDefinition {
         enabled = false;
     }
 
-    public String getName() {
+    public String name() {
         return name;
     }
 
