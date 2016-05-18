@@ -3,10 +3,12 @@ package com.github.michaelengland.fliptheswitch.gradle;
 import com.android.build.gradle.AppExtension;
 import com.android.build.gradle.AppPlugin;
 import com.android.build.gradle.api.ApplicationVariant;
+import com.android.build.gradle.internal.dsl.ProductFlavor;
 import com.github.michaelengland.fliptheswitch.Feature;
 
 import org.gradle.api.Action;
 import org.gradle.api.GradleException;
+import org.gradle.api.NamedDomainObjectCollection;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 
@@ -14,6 +16,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
 
 public class FlipTheSwitchPlugin implements Plugin<Project> {
     private static final String FLIP_THE_SWITCH_EXTENSION_NAME = "features";
@@ -23,6 +27,12 @@ public class FlipTheSwitchPlugin implements Plugin<Project> {
     public void apply(Project project) {
         checkAndroidPlugin(project);
         setupExtension(project);
+        project.afterEvaluate(new Action<Project>() {
+            @Override
+            public void execute(final Project project) {
+                writeFeatureFiles(project);
+            }
+        });
     }
 
     private void checkAndroidPlugin(final Project project) {
@@ -35,26 +45,26 @@ public class FlipTheSwitchPlugin implements Plugin<Project> {
         FeaturesExtension featuresExtension = project.getExtensions().create(FLIP_THE_SWITCH_EXTENSION_NAME,
                 FeaturesExtension.class);
         featuresExtension.initialize(project);
-        project.afterEvaluate(new Action<Project>() {
-            @Override
-            public void execute(final Project project) {
-                writeFeatureFiles(project, getDefaultFeatures(project));
-            }
-        });
     }
 
-    private void writeFeatureFiles(final Project project, final Collection<Feature> defaultFeatures) {
-        findAndroidAppExtension(project).getApplicationVariants().all(new Action<ApplicationVariant>() {
-            @Override
-            public void execute(ApplicationVariant applicationVariant) {
-                writeFeatureFile(project, applicationVariant, defaultFeatures);
+    private void checkProductFlavorsExist(final Project project) {
+        for (ProductFlavorConfig productFlavorConfig : getProductFlavorConfigs(project)) {
+            if (!getProductFlavorNames(project).contains(productFlavorConfig.name())) {
+                throw new GradleException("You cannot have feature overrides for a non-existent product flavor (" +
+                        productFlavorConfig.name() + ")");
             }
-        });
+        }
     }
 
-    private void writeFeatureFile(final Project project, final ApplicationVariant applicationVariant,
-            final Collection<Feature> defaultFeatures) {
-        FeaturesWriter featuresWriter = new FeaturesWriter(defaultFeatures);
+    private void writeFeatureFiles(final Project project) {
+        checkProductFlavorsExist(project);
+        for (ApplicationVariant applicationVariant : getApplicationVariants(project)) {
+            writeFeatureFile(project, applicationVariant);
+        }
+    }
+
+    private void writeFeatureFile(final Project project, final ApplicationVariant applicationVariant) {
+        FeaturesWriter featuresWriter = new FeaturesWriter(getFeatures(project, applicationVariant));
         try {
             featuresWriter.build().writeTo(featuresFile(project, applicationVariant));
         } catch (IOException e) {
@@ -62,16 +72,62 @@ public class FlipTheSwitchPlugin implements Plugin<Project> {
         }
     }
 
-    private Collection<Feature> getDefaultFeatures(final Project project) {
+    private Collection<Feature> getFeatures(final Project project, final ApplicationVariant applicationVariant) {
+        checkOverriddenFeaturesExist(project, applicationVariant);
         Collection<Feature> defaultFeatures = new ArrayList<>();
-        for (FeatureDefinition featureDefinition : getConfig(project)) {
+        for (FeatureDefinition featureDefinition : getDefaultConfig(project)) {
             defaultFeatures.add(new Feature(featureDefinition.name(), featureDefinition.description(),
-                    featureDefinition.enabled()));
+                    getOverrides(project, applicationVariant).getOrDefault(featureDefinition.name(),
+                            featureDefinition.enabled())));
         }
         return defaultFeatures;
     }
 
-    private Collection<FeatureDefinition> getConfig(final Project project) {
+    private void checkOverriddenFeaturesExist(final Project project, final ApplicationVariant applicationVariant) {
+        Collection<String> featureNames = getFeatureNames(project);
+        for (String name : getOverrides(project, applicationVariant).keySet()) {
+            if (!featureNames.contains(name)) {
+                throw new GradleException("You cannot have feature overrides for a non-existent feature (" + name +
+                        ")");
+            }
+        }
+    }
+
+    private Map<String, Boolean> getOverrides(final Project project, final ApplicationVariant applicationVariant) {
+        ProductFlavorConfig productFlavorConfig = getProductFlavorConfigs(project)
+                .findByName(applicationVariant.getFlavorName());
+        if (productFlavorConfig == null) {
+            return Collections.emptyMap();
+        } else {
+            return productFlavorConfig.overrides();
+        }
+    }
+
+    private NamedDomainObjectCollection<ProductFlavorConfig> getProductFlavorConfigs(final Project project) {
+        return findFlipTheSwitchExtension(project).productFlavors();
+    }
+
+    private Collection<String> getProductFlavorNames(final Project project) {
+        Collection<String> productFlavorNames = new ArrayList<>();
+        for (ProductFlavor productFlavor : findAndroidAppExtension(project).getProductFlavors()) {
+            productFlavorNames.add(productFlavor.getName());
+        }
+        return productFlavorNames;
+    }
+
+    private Collection<String> getFeatureNames(final Project project) {
+        Collection<String> featureNames = new ArrayList<>();
+        for (FeatureDefinition featureDefinition : getDefaultConfig(project)) {
+            featureNames.add(featureDefinition.name());
+        }
+        return featureNames;
+    }
+
+    private Collection<ApplicationVariant> getApplicationVariants(final Project project) {
+        return findAndroidAppExtension(project).getApplicationVariants();
+    }
+
+    private Collection<FeatureDefinition> getDefaultConfig(final Project project) {
         return findFlipTheSwitchExtension(project).defaultConfig();
     }
 

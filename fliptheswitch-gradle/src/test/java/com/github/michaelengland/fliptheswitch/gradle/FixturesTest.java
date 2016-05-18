@@ -23,7 +23,7 @@ public class FixturesTest {
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     @Test
-    public void aSimpleProjectSetup_generatesCorrectFeaturesFile() throws Exception {
+    public void aSimpleProjectSetup_generatesCorrectFeaturesFilePerBuildType() throws Exception {
         setupFromFixtureName("simple");
 
         gradleRunner().build().getOutput();
@@ -33,11 +33,36 @@ public class FixturesTest {
     }
 
     @Test
+    public void aProjectSetupWithProductFlavors_generatesCorrectFeaturesFilePerFlavor() throws Exception {
+        setupFromFixtureName("product-flavors");
+
+        gradleRunner().build().getOutput();
+
+        assertThat(generatedFile("production/debug"), is(expectedFile()));
+    }
+
+    @Test
     public void aProjectSetupWithoutAndroid_throwsError() throws Exception {
         setupFromFixtureName("no-android-yet");
 
         assertThat(gradleRunner().buildAndFail().getOutput(),
                 containsString("You must apply the Android App plugin before applying the fliptheswitch plugin"));
+    }
+
+    @Test
+    public void aProjectSetupWithNonExistentProductFlavors_throwsError() throws Exception {
+        setupFromFixtureName("non-existent-product-flavors");
+
+        assertThat(gradleRunner().buildAndFail().getOutput(),
+                containsString("You cannot have feature overrides for a non-existent product flavor (nonExistent)"));
+    }
+
+    @Test
+    public void aProjectSetupWithNonExistentFeatureOverrides_throwsError() throws Exception {
+        setupFromFixtureName("non-existent-feature-override");
+
+        assertThat(gradleRunner().buildAndFail().getOutput(),
+                containsString("You cannot have feature overrides for a non-existent feature (nonExistent)"));
     }
 
     private GradleRunner gradleRunner() throws Exception {
