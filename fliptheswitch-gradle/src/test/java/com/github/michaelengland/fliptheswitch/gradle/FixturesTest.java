@@ -42,6 +42,15 @@ public class FixturesTest {
     }
 
     @Test
+    public void aProjectSetupWithInheritedProductFlavors_generatesCorrectFeaturesFilePerFlavor() throws Exception {
+        setupFromFixtureName("inheritance");
+
+        gradleRunner().build().getOutput();
+
+        assertThat(generatedFile("production/debug"), is(expectedFile()));
+    }
+
+    @Test
     public void aProjectSetupWithoutAndroid_throwsError() throws Exception {
         setupFromFixtureName("no-android-yet");
 

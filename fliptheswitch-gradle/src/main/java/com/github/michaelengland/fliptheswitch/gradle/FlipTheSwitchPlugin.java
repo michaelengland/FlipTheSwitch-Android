@@ -16,7 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 public class FlipTheSwitchPlugin implements Plugin<Project> {
@@ -97,9 +97,19 @@ public class FlipTheSwitchPlugin implements Plugin<Project> {
         ProductFlavorConfig productFlavorConfig = getProductFlavorConfigs(project)
                 .findByName(applicationVariant.getFlavorName());
         if (productFlavorConfig == null) {
-            return Collections.emptyMap();
+            return new HashMap<>();
         } else {
+            return getOverrides(productFlavorConfig);
+        }
+    }
+
+    private Map<String, Boolean> getOverrides(final ProductFlavorConfig productFlavorConfig) {
+        if (productFlavorConfig.inheritsFrom() == null) {
             return productFlavorConfig.overrides();
+        } else {
+            Map<String, Boolean> overrides = new HashMap<>(getOverrides(productFlavorConfig.inheritsFrom()));
+            overrides.putAll(productFlavorConfig.overrides());
+            return overrides;
         }
     }
 
