@@ -76,9 +76,13 @@ public class FlipTheSwitchPlugin implements Plugin<Project> {
         checkOverriddenFeaturesExist(project, applicationVariant);
         Collection<Feature> defaultFeatures = new ArrayList<>();
         for (FeatureDefinition featureDefinition : getDefaultConfig(project)) {
-            defaultFeatures.add(new Feature(featureDefinition.name(), featureDefinition.description(),
-                    getOverrides(project, applicationVariant).getOrDefault(featureDefinition.name(),
-                            featureDefinition.enabled())));
+            boolean isEnabled;
+            if (getOverrides(project, applicationVariant).containsKey(featureDefinition.name())) {
+                isEnabled = getOverrides(project, applicationVariant).get(featureDefinition.name());
+            } else {
+                isEnabled = featureDefinition.enabled();
+            }
+            defaultFeatures.add(new Feature(featureDefinition.name(), featureDefinition.description(), isEnabled));
         }
         return defaultFeatures;
     }
