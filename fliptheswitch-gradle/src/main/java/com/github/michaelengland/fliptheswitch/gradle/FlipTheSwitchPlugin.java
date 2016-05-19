@@ -11,12 +11,15 @@ import org.gradle.api.GradleException;
 import org.gradle.api.NamedDomainObjectCollection;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.Task;
+import org.gradle.api.tasks.compile.JavaCompile;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class FlipTheSwitchPlugin implements Plugin<Project> {
@@ -24,7 +27,7 @@ public class FlipTheSwitchPlugin implements Plugin<Project> {
     private static final String ANDROID_EXTENSION_NAME = "android";
 
     @Override
-    public void apply(Project project) {
+    public void apply(final Project project) {
         checkAndroidPlugin(project);
         setupExtension(project);
         project.afterEvaluate(new Action<Project>() {
@@ -60,10 +63,27 @@ public class FlipTheSwitchPlugin implements Plugin<Project> {
         checkProductFlavorsExist(project);
         for (ApplicationVariant applicationVariant : getApplicationVariants(project)) {
             writeFeatureFile(project, applicationVariant);
+            setupFeaturesSource(project, applicationVariant);
         }
     }
 
+    private void setupFeaturesSource(final Project project, final ApplicationVariant applicationVariant) {
+        final File featuresFile = featuresFile(project, applicationVariant);
+        applicationVariant.addJavaSourceFoldersToModel(featuresFile);
+        final JavaCompile javaCompile = applicationVariant.getJavaCompile();
+        javaCompile.doFirst(new Action<Task>() {
+            @Override
+            public void execute(Task task) {
+                writeFeatureFile(project, applicationVariant);
+            }
+        });
+        final List<String> compilerArgs = javaCompile.getOptions().getCompilerArgs();
+        compilerArgs.add("-s");
+        compilerArgs.add(featuresFile.toString());
+    }
+
     private void writeFeatureFile(final Project project, final ApplicationVariant applicationVariant) {
+        featuresFile(project, applicationVariant).mkdirs();
         FeaturesWriter featuresWriter = new FeaturesWriter(getFeatures(project, applicationVariant));
         try {
             featuresWriter.build().writeTo(featuresFile(project, applicationVariant));
@@ -146,7 +166,7 @@ public class FlipTheSwitchPlugin implements Plugin<Project> {
     }
 
     private File featuresFile(final Project project, final ApplicationVariant applicationVariant) {
-        return new File(project.getBuildDir() + "/generated/source/buildConfig/" + applicationVariant.getDirName());
+        return new File(project.getBuildDir() + "/generated/source/fliptheswitch/" + applicationVariant.getDirName());
     }
 
     private FeaturesExtension findFlipTheSwitchExtension(final Project project) {

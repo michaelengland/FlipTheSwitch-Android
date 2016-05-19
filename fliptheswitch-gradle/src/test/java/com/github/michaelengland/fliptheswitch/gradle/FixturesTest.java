@@ -26,7 +26,7 @@ public class FixturesTest {
     public void aSimpleProjectSetup_generatesCorrectFeaturesFilePerBuildType() throws Exception {
         setupFromFixtureName("simple");
 
-        gradleRunner().build().getOutput();
+        gradleRunner().build();
 
         assertThat(generatedFile("debug"), is(expectedFile()));
         assertThat(generatedFile("release"), is(expectedFile()));
@@ -36,18 +36,20 @@ public class FixturesTest {
     public void aProjectSetupWithProductFlavors_generatesCorrectFeaturesFilePerFlavor() throws Exception {
         setupFromFixtureName("product-flavors");
 
-        gradleRunner().build().getOutput();
+        gradleRunner().build();
 
         assertThat(generatedFile("production/debug"), is(expectedFile()));
+        assertThat(generatedFile("production/release"), is(expectedFile()));
     }
 
     @Test
     public void aProjectSetupWithInheritedProductFlavors_generatesCorrectFeaturesFilePerFlavor() throws Exception {
         setupFromFixtureName("inheritance");
 
-        gradleRunner().build().getOutput();
+        gradleRunner().build();
 
         assertThat(generatedFile("production/debug"), is(expectedFile()));
+        assertThat(generatedFile("production/release"), is(expectedFile()));
     }
 
     @Test
@@ -91,8 +93,9 @@ public class FixturesTest {
     }
 
     private String generatedFile(final String variant) throws Exception {
-        return FileUtils.readFileToString(new File(temporaryFolder.getRoot() + "/build/generated/source/buildConfig/" +
-                variant + "/com/github/michaelengland/fliptheswitch/Features.java"));
+        return FileUtils.readFileToString(new File(temporaryFolder.getRoot() +
+                "/build/generated/source/fliptheswitch/" + variant +
+                "/com/github/michaelengland/fliptheswitch/Features.java"));
     }
 
     private String expectedFile() throws Exception {
