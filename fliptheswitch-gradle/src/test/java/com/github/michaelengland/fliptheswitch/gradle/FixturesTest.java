@@ -94,7 +94,7 @@ public class FixturesTest {
 
     private String generatedFile(final String variant) throws Exception {
         return FileUtils.readFileToString(new File(temporaryFolder.getRoot() +
-                "/build/generated/source/fliptheswitch/" + variant +
+                "/build/generated/source/buildConfig/" + variant +
                 "/com/github/michaelengland/fliptheswitch/Features.java"));
     }
 
