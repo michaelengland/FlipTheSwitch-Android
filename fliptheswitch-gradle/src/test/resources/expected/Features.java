@@ -4,7 +4,7 @@ import android.content.Context;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class Features {
+public class Features {
   private final FlipTheSwitch flipTheSwitch;
 
   Features(final FlipTheSwitch flipTheSwitch) {

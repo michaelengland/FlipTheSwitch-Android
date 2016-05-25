@@ -28,7 +28,7 @@ public class FeaturesWriter {
 
     private TypeSpec type() {
         TypeSpec.Builder typeBuilder = TypeSpec.classBuilder(featuresTypeName())
-                .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+                .addModifiers(Modifier.PUBLIC)
                 .addField(flipTheSwitchTypeName(), "flipTheSwitch", Modifier.PRIVATE, Modifier.FINAL)
                 .addMethod(constructor())
                 .addMethod(withMethod())
