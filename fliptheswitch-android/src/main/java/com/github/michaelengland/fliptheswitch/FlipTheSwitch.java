@@ -3,31 +3,26 @@ package com.github.michaelengland.fliptheswitch;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FlipTheSwitch {
     private static final String SHARED_PREFERENCES_NAME = "features";
 
-    private static volatile FlipTheSwitch singleton;
+    static List<Feature> defaultFeatures = new ArrayList<>();
 
     private final SharedPreferences sharedPreferences;
-    private final List<Feature> defaultFeatures;
 
-    public static FlipTheSwitch with(final Context context, List<Feature> defaultFeatures) {
-        if (singleton == null) {
-            synchronized (FlipTheSwitch.class) {
-                if (singleton == null) {
-                    singleton = new FlipTheSwitch(context.getSharedPreferences(SHARED_PREFERENCES_NAME,
-                            Context.MODE_PRIVATE), defaultFeatures);
-                }
-            }
-        }
-        return singleton;
+    public FlipTheSwitch(Context context) {
+        this(context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE));
     }
 
-    FlipTheSwitch(final SharedPreferences sharedPreferences, final List<Feature> defaultFeatures) {
+    FlipTheSwitch(final SharedPreferences sharedPreferences) {
         this.sharedPreferences = sharedPreferences;
-        this.defaultFeatures = defaultFeatures;
+    }
+
+    public static List<Feature> getDefaultFeatures() {
+        return defaultFeatures;
     }
 
     public boolean isFeatureEnabled(final String featureName) {

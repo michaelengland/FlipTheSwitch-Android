@@ -11,18 +11,12 @@ import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 
-import java.util.List;
-
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertThat;
 
 @RunWith(RobolectricTestRunner.class)
 public class FlipTheSwitchTest {
     private FlipTheSwitch flipTheSwitch;
-
-    private Context context;
-    private List<Feature> defaultFeatures;
 
     private String defaultEnabledFeatureName;
     private String defaultDisabledFeatureName;
@@ -33,20 +27,13 @@ public class FlipTheSwitchTest {
         defaultEnabledFeatureName = "default_enabled_feature";
         defaultDisabledFeatureName = "default_disabled_feature";
         standardFeatureName = "standard_feature";
-        context = RuntimeEnvironment.application;
-        SharedPreferences sharedPreferences = context.getSharedPreferences("features", Context.MODE_PRIVATE);
-        defaultFeatures = ImmutableList.of(
+        SharedPreferences sharedPreferences = RuntimeEnvironment.application.getSharedPreferences("features",
+                Context.MODE_PRIVATE);
+        FlipTheSwitch.defaultFeatures = ImmutableList.of(
                 new Feature(defaultEnabledFeatureName, "ein geiles Feature", true),
                 new Feature(defaultDisabledFeatureName, "noch ein Feature", false)
         );
-        flipTheSwitch = new FlipTheSwitch(sharedPreferences, defaultFeatures);
-    }
-
-    @Test
-    public void with_returnsSingleton() throws Exception {
-        FlipTheSwitch firstCall = FlipTheSwitch.with(context, defaultFeatures);
-        FlipTheSwitch secondCall = FlipTheSwitch.with(context, defaultFeatures);
-        assertThat(firstCall, is(sameInstance(secondCall)));
+        flipTheSwitch = new FlipTheSwitch(sharedPreferences);
     }
 
     @Test
