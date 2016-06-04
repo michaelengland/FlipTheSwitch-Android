@@ -1,5 +1,4 @@
 include ':fliptheswitch-core'
 include ':fliptheswitch-android'
 include ':fliptheswitch-gradle'
-include ':fliptheswitch-example'
 include ':fliptheswitch-app'

@@ -1,17 +1,26 @@
 buildscript {
-    dependencies {
-        classpath deps.androidPlugin
+    repositories {
+        mavenCentral()
+        jcenter()
     }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:1.5.0'
+    }
+}
+
+repositories {
+    mavenCentral()
+    jcenter()
 }
 
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion consts.compileSdkVersion
-    buildToolsVersion consts.buildToolsVersion
+    compileSdkVersion 23
+    buildToolsVersion '23.0.2'
     defaultConfig {
-        minSdkVersion consts.minSdkVersion
-        targetSdkVersion consts.targetSdkVersion
+        minSdkVersion 14
+        targetSdkVersion 23
         versionCode 1
         versionName "1.0"
     }
@@ -35,6 +44,6 @@ android {
 }
 
 dependencies {
-    testCompile deps.junit
-    compile deps.appCompat
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:appcompat-v7:23.4.0'
 }
