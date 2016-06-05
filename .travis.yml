@@ -17,4 +17,4 @@ before_script:
 
 script:
    - ./gradlew build connectedCheck copyToExample
-   - cd fliptheswitch-example && ../gradlew build connectedCheck
+   - cd fliptheswitch-example && ./gradlew build connectedCheck
