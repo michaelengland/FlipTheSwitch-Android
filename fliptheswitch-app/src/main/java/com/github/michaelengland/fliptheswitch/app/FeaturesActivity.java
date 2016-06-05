@@ -10,11 +10,18 @@ import com.github.michaelengland.fliptheswitch.Feature;
 import com.github.michaelengland.fliptheswitch.FlipTheSwitch;
 
 public class FeaturesActivity extends AppCompatActivity {
+    private FlipTheSwitch flipTheSwitch;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        final FlipTheSwitch flipTheSwitch = new FlipTheSwitch(this);
+        flipTheSwitch = new FlipTheSwitch(this);
         setContentView(R.layout.activitiy_features);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         getResetButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -24,11 +31,11 @@ public class FeaturesActivity extends AppCompatActivity {
 
         FeaturesAdapter adapter = new FeaturesAdapter(getLayoutInflater(), FlipTheSwitch.getDefaultFeatures(),
                 new FeaturesAdapter.OnFeatureToggledListener() {
-            @Override
-            public void onFeatureToggled(Feature feature, boolean enabled) {
-                flipTheSwitch.setFeatureEnabled(feature.getName(), enabled);
-            }
-        });
+                    @Override
+                    public void onFeatureToggled(Feature feature, boolean enabled) {
+                        flipTheSwitch.setFeatureEnabled(feature.getName(), enabled);
+                    }
+                });
         getListView().setAdapter(adapter);
     }
 
