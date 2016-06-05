@@ -1,10 +1,9 @@
 <manifest package="com.github.michaelengland.fliptheswitch.app"
           xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <application
-        android:label="@string/app_name">
+    <application>
 
-        <activity android:name=".FeaturesActivity">
+        <activity android:name=".FeaturesActivity" android:label="@string/fliptheswitch_app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
