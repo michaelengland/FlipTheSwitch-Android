@@ -6,3 +6,19 @@ version = VERSION_NAME
 
 sourceCompatibility = consts.sourceCompatibility
 targetCompatibility = consts.targetCompatibility
+
+configurations {
+    provided
+    compile.extendsFrom provided
+}
+
+task('copyToExample', type: Copy, dependsOn: 'build') {
+    from configurations.compile - configurations.provided
+    into "../${consts.exampleProjectBuildscriptLibs}"
+    from configurations.compile - configurations.provided
+    into "../${consts.exampleProjectLibs}"
+    from "${buildDir}/libs/fliptheswitch-gradle-${VERSION_NAME}.jar"
+    into "../${consts.exampleProjectBuildscriptLibs}"
+    from "${buildDir}/libs/fliptheswitch-gradle-${VERSION_NAME}.jar"
+    into "../${consts.exampleProjectLibs}"
+}

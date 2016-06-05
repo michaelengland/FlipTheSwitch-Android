@@ -15,26 +15,34 @@ task createClasspathManifest {
     outputs.dir outputDir
 
     doLast {
+        def pluginClasspath = sourceSets.main.runtimeClasspath - configurations.provided
         outputDir.mkdirs()
-        file("$outputDir/plugin-classpath.txt").text = sourceSets.main.runtimeClasspath.join("\n")
+        file("$outputDir/plugin-classpath.txt").text = pluginClasspath.join("\n")
     }
 }
 
+configurations {
+    provided
+    testProvided
+    compile.extendsFrom provided
+    testCompile.extendsFrom testProvided
+}
+
 dependencies {
-    compile gradleApi()
-    compile localGroovy()
+    provided gradleApi()
+    provided localGroovy()
+    compile deps.androidPlugin
     compile project(':fliptheswitch-core')
     compile deps.javaPoet
-    compile deps.androidPlugin
     testCompile deps.junit
-    testCompile gradleTestKit()
+    testProvided gradleTestKit()
 
     // Add the classpath file to the test runtime classpath
     testRuntime files(createClasspathManifest)
 }
 
 task('copyToExample', type: Copy, dependsOn: 'build') {
-    from configurations.compile
+    from configurations.compile - configurations.provided
     into "../${consts.exampleProjectBuildscriptLibs}"
     from "${buildDir}/libs/fliptheswitch-gradle-${VERSION_NAME}.jar"
     into "../${consts.exampleProjectBuildscriptLibs}"

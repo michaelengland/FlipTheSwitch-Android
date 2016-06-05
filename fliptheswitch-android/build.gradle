@@ -36,6 +36,11 @@ android {
     }
 }
 
+configurations {
+    provided
+    compile.extendsFrom provided
+}
+
 dependencies {
     compile project(':fliptheswitch-core')
     testCompile deps.junit
@@ -43,7 +48,7 @@ dependencies {
 }
 
 task('copyToExample', type: Copy, dependsOn: 'build') {
-    from configurations.compile
+    from configurations.compile - configurations.provided
     into "../${consts.exampleProjectLibs}"
     from "${buildDir}/outputs/aar/fliptheswitch-android-release.aar"
     into "../${consts.exampleProjectLibs}"
