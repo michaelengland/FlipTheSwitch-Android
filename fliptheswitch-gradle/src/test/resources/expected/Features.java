@@ -5,21 +5,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Features {
-  private final FlipTheSwitch flipTheSwitch;
-
-  Features(final FlipTheSwitch flipTheSwitch) {
-    this.flipTheSwitch = flipTheSwitch;
-  }
-
-  public static Features with(final Context context) {
-    return new Features(FlipTheSwitch.with(context, getDefaultFeatures()));
-  }
-
-  private static List<Feature> getDefaultFeatures() {
+  static {
     List<Feature> defaultFeatures = new ArrayList<>();
     defaultFeatures.add(new Feature("another_feature", "Another disabled feature", false));
     defaultFeatures.add(new Feature("some_feature", "Some simple enabled feature", true));
-    return defaultFeatures;
+    FlipTheSwitch.defaultFeatures = defaultFeatures;
+  }
+
+  private final FlipTheSwitch flipTheSwitch;
+
+  public Features(final Context context) {
+    this(new FlipTheSwitch(context));
+  }
+
+  Features(final FlipTheSwitch flipTheSwitch) {
+    this.flipTheSwitch = flipTheSwitch;
   }
 
   public boolean isAnotherFeatureEnabled() {

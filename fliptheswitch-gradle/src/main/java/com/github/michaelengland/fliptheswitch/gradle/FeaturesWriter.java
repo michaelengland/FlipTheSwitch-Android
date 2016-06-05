@@ -3,6 +3,7 @@ package com.github.michaelengland.fliptheswitch.gradle;
 import com.github.michaelengland.fliptheswitch.Feature;
 import com.google.common.base.CaseFormat;
 import com.squareup.javapoet.ClassName;
+import com.squareup.javapoet.CodeBlock;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
@@ -29,10 +30,10 @@ public class FeaturesWriter {
     private TypeSpec type() {
         TypeSpec.Builder typeBuilder = TypeSpec.classBuilder(featuresTypeName())
                 .addModifiers(Modifier.PUBLIC)
+                .addStaticBlock(setDefaultFeaturesBlock())
                 .addField(flipTheSwitchTypeName(), "flipTheSwitch", Modifier.PRIVATE, Modifier.FINAL)
-                .addMethod(constructor())
-                .addMethod(withMethod())
-                .addMethod(getDefaultFeaturesMethod());
+                .addMethod(publicConstructor())
+                .addMethod(internalConstructor());
         for (Feature feature : defaultFeatures) {
             typeBuilder.addMethod(isFeatureEnabledMethod(feature))
                     .addMethod(enableFeatureMethod(feature))
@@ -45,33 +46,30 @@ public class FeaturesWriter {
                 .build();
     }
 
-    private MethodSpec constructor() {
+    private CodeBlock setDefaultFeaturesBlock() {
+        CodeBlock.Builder defaultFeaturesMethodBuilder = CodeBlock.builder()
+                .addStatement("$T defaultFeatures = new $T<>()", listOfFeaturesTypeName(), ArrayList.class);
+        for (Feature feature : defaultFeatures) {
+            defaultFeaturesMethodBuilder.addStatement("defaultFeatures.add(new $T($S, $S, $L))", Feature.class,
+                    snakeCaseFeatureName(feature.getName()), feature.getDescription(), feature.isEnabled());
+        }
+        return defaultFeaturesMethodBuilder.addStatement("$T.defaultFeatures = defaultFeatures",
+                flipTheSwitchTypeName())
+                .build();
+    }
+
+    private MethodSpec internalConstructor() {
         return MethodSpec.constructorBuilder()
                 .addParameter(flipTheSwitchTypeName(), "flipTheSwitch", Modifier.FINAL)
                 .addStatement("this.$N = $N", "flipTheSwitch", "flipTheSwitch")
                 .build();
     }
 
-    private MethodSpec withMethod() {
-        return MethodSpec.methodBuilder("with")
-                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                .returns(featuresTypeName())
+    private MethodSpec publicConstructor() {
+        return MethodSpec.constructorBuilder()
+                .addModifiers(Modifier.PUBLIC)
                 .addParameter(contextTypeName(), "context", Modifier.FINAL)
-                .addStatement("return new $T($T.with($N, $N()))", featuresTypeName(),
-                        flipTheSwitchTypeName(), "context", getDefaultFeaturesMethod())
-                .build();
-    }
-
-    private MethodSpec getDefaultFeaturesMethod() {
-        MethodSpec.Builder defaultFeaturesMethodBuilder = MethodSpec.methodBuilder("getDefaultFeatures")
-                .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
-                .returns(listOfFeaturesTypeName())
-                .addStatement("$T defaultFeatures = new $T<>()", listOfFeaturesTypeName(), ArrayList.class);
-        for (Feature feature : defaultFeatures) {
-            defaultFeaturesMethodBuilder.addStatement("defaultFeatures.add(new $T($S, $S, $L))", Feature.class,
-                    snakeCaseFeatureName(feature.getName()), feature.getDescription(), feature.isEnabled());
-        }
-        return defaultFeaturesMethodBuilder.addStatement("return defaultFeatures")
+                .addStatement("this(new $T($N))", flipTheSwitchTypeName(), "context")
                 .build();
     }
 
