@@ -9,17 +9,20 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.github.michaelengland.fliptheswitch.Feature;
+import com.github.michaelengland.fliptheswitch.FlipTheSwitch;
 
 import java.util.List;
 
 public class FeaturesAdapter extends BaseAdapter {
     private final LayoutInflater layoutInflater;
+    private final FlipTheSwitch flipTheSwitch;
     private final List<Feature> features;
     private final OnFeatureToggledListener onFeatureToggledListener;
 
-    public FeaturesAdapter(LayoutInflater layoutInflater, List<Feature> features,
+    public FeaturesAdapter(LayoutInflater layoutInflater, FlipTheSwitch flipTheSwitch, List<Feature> features,
             OnFeatureToggledListener onFeatureToggledListener) {
         this.layoutInflater = layoutInflater;
+        this.flipTheSwitch = flipTheSwitch;
         this.features = features;
         this.onFeatureToggledListener = onFeatureToggledListener;
     }
@@ -61,7 +64,7 @@ public class FeaturesAdapter extends BaseAdapter {
         Switch switchView = (Switch) view.findViewById(R.id.list_item_feature_switch);
         nameTextView.setText(feature.getName());
         descriptionTextView.setText(feature.getDescription());
-        switchView.setChecked(feature.isEnabled());
+        switchView.setChecked(flipTheSwitch.isFeatureEnabled(feature.getName()));
         switchView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

@@ -33,8 +33,8 @@ public class FeaturesActivity extends AppCompatActivity {
             }
         });
 
-        FeaturesAdapter adapter = new FeaturesAdapter(getLayoutInflater(), FlipTheSwitch.getDefaultFeatures(),
-                new FeaturesAdapter.OnFeatureToggledListener() {
+        FeaturesAdapter adapter = new FeaturesAdapter(getLayoutInflater(), flipTheSwitch,
+                FlipTheSwitch.getDefaultFeatures(), new FeaturesAdapter.OnFeatureToggledListener() {
                     @Override
                     public void onFeatureToggled(Feature feature, boolean enabled) {
                         flipTheSwitch.setFeatureEnabled(feature.getName(), enabled);
