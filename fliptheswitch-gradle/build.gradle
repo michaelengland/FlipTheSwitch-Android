@@ -21,17 +21,10 @@ task createClasspathManifest {
     }
 }
 
-configurations {
-    provided
-    testProvided
-    compile.extendsFrom provided
-    testCompile.extendsFrom testProvided
-}
-
 dependencies {
     provided gradleApi()
     provided localGroovy()
-    compile deps.androidPlugin
+    android deps.androidPlugin
     compile project(':fliptheswitch-core')
     compile deps.javaPoet
     testCompile deps.junit
@@ -42,7 +35,7 @@ dependencies {
 }
 
 task('copyToExample', type: Copy, dependsOn: 'build') {
-    from configurations.compile - configurations.provided
+    from configurations.compile - configurations.android
     into "../${consts.exampleProjectBuildscriptLibs}"
     from "${buildDir}/libs/fliptheswitch-gradle-${VERSION_NAME}.jar"
     into "../${consts.exampleProjectBuildscriptLibs}"

@@ -9,6 +9,14 @@ subprojects {
         mavenCentral()
         jcenter()
     }
+    configurations {
+        provided
+        testProvided
+        android.extendsFrom provided
+        testAndroid.extendsFrom testProvided
+        compile.extendsFrom android
+        testCompile.extendsFrom testAndroid
+    }
 }
 
 ext {
