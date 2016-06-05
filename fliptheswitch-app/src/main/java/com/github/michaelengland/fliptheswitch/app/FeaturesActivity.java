@@ -26,10 +26,15 @@ public class FeaturesActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        setupView();
+    }
+
+    private void setupView() {
         getResetButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 flipTheSwitch.resetAllFeatures();
+                setupView();
             }
         });
 
