@@ -40,3 +40,10 @@ dependencies {
     compile project(':fliptheswitch-android')
     compile deps.appCompat
 }
+
+task('copyToExample', type: Copy, dependsOn: 'build') {
+    from configurations.compile
+    into "../${consts.exampleProjectLibs}"
+    from "${buildDir}/outputs/aar/fliptheswitch-app-release.aar"
+    into "../${consts.exampleProjectLibs}"
+}

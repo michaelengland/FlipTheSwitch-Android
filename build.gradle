@@ -13,12 +13,14 @@ subprojects {
 
 ext {
     consts = [
-            compileSdkVersion  : 23,
-            buildToolsVersion  : '23.0.2',
-            minSdkVersion      : 14,
-            targetSdkVersion   : 23,
-            sourceCompatibility: JavaVersion.VERSION_1_7,
-            targetCompatibility: JavaVersion.VERSION_1_7
+            compileSdkVersion            : 23,
+            buildToolsVersion            : '23.0.2',
+            minSdkVersion                : 14,
+            targetSdkVersion             : 23,
+            sourceCompatibility          : JavaVersion.VERSION_1_7,
+            targetCompatibility          : JavaVersion.VERSION_1_7,
+            exampleProjectBuildscriptLibs: 'fliptheswitch-example/projectBuildscriptLibs',
+            exampleProjectLibs           : 'fliptheswitch-example/projectLibs'
     ]
 
     deps = [
@@ -32,4 +34,6 @@ ext {
 
 task clean(type: Delete) {
     delete rootProject.buildDir
+    delete consts.exampleProjectBuildscriptLibs
+    delete consts.exampleProjectLibs
 }

@@ -41,3 +41,10 @@ dependencies {
     testCompile deps.junit
     testCompile deps.robolectric
 }
+
+task('copyToExample', type: Copy, dependsOn: 'build') {
+    from configurations.compile
+    into "../${consts.exampleProjectLibs}"
+    from "${buildDir}/outputs/aar/fliptheswitch-android-release.aar"
+    into "../${consts.exampleProjectLibs}"
+}

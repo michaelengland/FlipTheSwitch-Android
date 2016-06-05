@@ -28,6 +28,14 @@ dependencies {
     compile deps.androidPlugin
     testCompile deps.junit
     testCompile gradleTestKit()
+
     // Add the classpath file to the test runtime classpath
     testRuntime files(createClasspathManifest)
+}
+
+task('copyToExample', type: Copy, dependsOn: 'build') {
+    from configurations.compile
+    into "../${consts.exampleProjectBuildscriptLibs}"
+    from "${buildDir}/libs/fliptheswitch-gradle-${VERSION_NAME}.jar"
+    into "../${consts.exampleProjectBuildscriptLibs}"
 }
