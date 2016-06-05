@@ -15,6 +15,10 @@ public class FeaturesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        try {
+            Class.forName("com.github.michaelengland.fliptheswitch.Features");
+        } catch (ClassNotFoundException ignored) {
+        }
         flipTheSwitch = new FlipTheSwitch(this);
         setContentView(R.layout.activitiy_features);
     }
