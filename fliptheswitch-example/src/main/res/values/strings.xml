@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">FlipTheSwitch-Example</string>
+    <string name="change_the_color">Change the color</string>
+    <string name="color_description">The screen is %1$s</string>
+    <string name="orange">orange</string>
+    <string name="green">green</string>
+    <string name="red">red</string>
+    <string name="purple">purple</string>
 </resources>

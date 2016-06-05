@@ -1,19 +1,24 @@
 buildscript {
     repositories {
+        flatDir dirs: 'projectBuildscriptLibs'
         mavenCentral()
         jcenter()
     }
     dependencies {
+        classpath fileTree(dir: 'projectBuildscriptLibs', include: '*.jar')
         classpath 'com.android.tools.build:gradle:2.1.0'
     }
 }
 
 repositories {
+    flatDir dirs: 'projectLibs'
     mavenCentral()
     jcenter()
 }
 
 apply plugin: 'com.android.application'
+
+apply from: 'features.gradle'
 
 android {
     compileSdkVersion 23
@@ -32,18 +37,22 @@ android {
     }
     productFlavors {
         dev {
-            applicationId "com.github.michaelengland.fliptheswitch.example.dev"
+            applicationId 'com.github.michaelengland.fliptheswitch.example.dev'
         }
         beta {
-            applicationId "com.github.michaelengland.fliptheswitch.example.beta"
+            applicationId 'com.github.michaelengland.fliptheswitch.example.beta'
         }
         production {
-            applicationId "com.github.michaelengland.fliptheswitch.example.production"
+            applicationId 'com.github.michaelengland.fliptheswitch.example.production'
         }
     }
 }
 
 dependencies {
-    testCompile 'junit:junit:4.12'
+    compile fileTree(dir: 'projectLibs', include: '*.jar')
     compile 'com.android.support:appcompat-v7:23.4.0'
+    compile(name: 'fliptheswitch-android-release', ext: 'aar')
+    devCompile(name: 'fliptheswitch-app-release', ext: 'aar')
+    betaCompile(name: 'fliptheswitch-app-release', ext: 'aar')
+    testCompile 'junit:junit:4.12'
 }
