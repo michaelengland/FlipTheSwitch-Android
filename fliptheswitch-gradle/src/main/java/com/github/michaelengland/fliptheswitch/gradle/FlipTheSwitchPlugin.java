@@ -21,9 +21,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import groovy.lang.Closure;
+
 public class FlipTheSwitchPlugin implements Plugin<Project> {
     private static final String FLIP_THE_SWITCH_EXTENSION_NAME = "features";
     private static final String ANDROID_EXTENSION_NAME = "android";
+    private static final String CREATE_FEATURES_TASK_NAME = "createFeatures";
 
     @Override
     public void apply(final Project project) {
@@ -32,7 +35,17 @@ public class FlipTheSwitchPlugin implements Plugin<Project> {
         project.afterEvaluate(new Action<Project>() {
             @Override
             public void execute(final Project project) {
+                createFeatureTask(project);
                 writeFeatureFiles(project);
+            }
+        });
+    }
+
+    private void createFeatureTask(final Project project) {
+        project.task(CREATE_FEATURES_TASK_NAME, new Closure(project) {
+            public Object doCall() {
+                writeFeatureFiles(project);
+                return null;
             }
         });
     }
