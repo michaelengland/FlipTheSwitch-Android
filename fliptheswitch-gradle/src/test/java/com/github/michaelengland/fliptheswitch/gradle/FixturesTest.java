@@ -4,6 +4,7 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
 import org.apache.commons.io.FileUtils;
+import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
 import org.junit.Rule;
 import org.junit.Test;
@@ -26,7 +27,7 @@ public class FixturesTest {
     public void aSimpleProjectSetup_generatesCorrectFeaturesFilePerBuildType() throws Exception {
         setupFromFixtureName("simple");
 
-        gradleRunner().build();
+        gradleRunner("assembleRelease").build();
 
         assertThat(generatedFile("debug"), is(expectedFile()));
         assertThat(generatedFile("release"), is(expectedFile()));
@@ -36,7 +37,7 @@ public class FixturesTest {
     public void aProjectSetupWithProductFlavors_generatesCorrectFeaturesFilePerFlavor() throws Exception {
         setupFromFixtureName("product-flavors");
 
-        gradleRunner().build();
+        gradleRunner("assembleProductionRelease").build();
 
         assertThat(generatedFile("production/debug"), is(expectedFile()));
         assertThat(generatedFile("production/release"), is(expectedFile()));
@@ -46,7 +47,7 @@ public class FixturesTest {
     public void aProjectSetupWithInheritedProductFlavors_generatesCorrectFeaturesFilePerFlavor() throws Exception {
         setupFromFixtureName("inheritance");
 
-        gradleRunner().build();
+        gradleRunner("assembleProductionRelease").build();
 
         assertThat(generatedFile("production/debug"), is(expectedFile()));
         assertThat(generatedFile("production/release"), is(expectedFile()));
@@ -56,7 +57,7 @@ public class FixturesTest {
     public void aProjectSetupWithoutAndroid_throwsError() throws Exception {
         setupFromFixtureName("no-android-yet");
 
-        assertThat(gradleRunner().buildAndFail().getOutput(),
+        assertThat(gradleRunner("assemble").buildAndFail().getOutput(),
                 containsString("You must apply the Android App plugin before applying the fliptheswitch plugin"));
     }
 
@@ -64,7 +65,7 @@ public class FixturesTest {
     public void aProjectSetupWithNonExistentProductFlavors_throwsError() throws Exception {
         setupFromFixtureName("non-existent-product-flavors");
 
-        assertThat(gradleRunner().buildAndFail().getOutput(),
+        assertThat(gradleRunner("assembleProductionRelease").buildAndFail().getOutput(),
                 containsString("You cannot have feature overrides for a non-existent product flavor (nonExistent)"));
     }
 
@@ -72,15 +73,15 @@ public class FixturesTest {
     public void aProjectSetupWithNonExistentFeatureOverrides_throwsError() throws Exception {
         setupFromFixtureName("non-existent-feature-override");
 
-        assertThat(gradleRunner().buildAndFail().getOutput(),
+        assertThat(gradleRunner("assembleProductionRelease").buildAndFail().getOutput(),
                 containsString("You cannot have feature overrides for a non-existent feature (nonExistent)"));
     }
 
-    private GradleRunner gradleRunner() throws Exception {
+    private GradleRunner gradleRunner(String buildCommand) throws Exception {
         return GradleRunner.create()
                 .withProjectDir(temporaryFolder.getRoot())
                 .withPluginClasspath(pluginClasspaths())
-                .withArguments(gradleArguments());
+                .withArguments(gradleArguments(buildCommand));
     }
 
     private void setupFromFixtureName(final String fixtureName) throws Exception {
@@ -117,8 +118,9 @@ public class FixturesTest {
         return pluginClasspaths;
     }
 
-    private List<String> gradleArguments() {
+    private List<String> gradleArguments(String buildCommand) {
         List<String> gradleArguments = new ArrayList<>();
+        gradleArguments.add(buildCommand);
         gradleArguments.add("--stacktrace");
         return gradleArguments;
     }
