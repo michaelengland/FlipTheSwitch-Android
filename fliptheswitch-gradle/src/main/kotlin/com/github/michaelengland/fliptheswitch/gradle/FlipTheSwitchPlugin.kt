@@ -45,7 +45,7 @@ open class FlipTheSwitchPlugin : Plugin<Project> {
             task.features = getFeatures(project, it)
             task.description = "Generate features class for ${it.name}"
             task.buildDirectory = featuresFile(project, it)
-            it.addJavaSourceFoldersToModel(task.buildDirectory)
+            it.registerJavaGeneratingTask(task, task.buildDirectory)
             generateAllTask.dependsOn(task)
             it.preBuild.dependsOn(task)
         }
