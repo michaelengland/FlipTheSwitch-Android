@@ -4,7 +4,6 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
 import org.apache.commons.io.FileUtils;
-import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
 import org.junit.Rule;
 import org.junit.Test;
@@ -27,30 +26,40 @@ public class FixturesTest {
     public void aSimpleProjectSetup_generatesCorrectFeaturesFilePerBuildType() throws Exception {
         setupFromFixtureName("simple");
 
-        gradleRunner("assembleRelease").build();
+        gradleRunner("assembleDebug").build();
+        assertThat(generatedFile(), is(expectedFile()));
 
-        assertThat(generatedFile("debug"), is(expectedFile()));
-        assertThat(generatedFile("release"), is(expectedFile()));
+        gradleRunner("clean").build();
+
+        gradleRunner("assembleRelease").build();
+        assertThat(generatedFile(), is(expectedFile()));
     }
 
     @Test
     public void aProjectSetupWithProductFlavors_generatesCorrectFeaturesFilePerFlavor() throws Exception {
         setupFromFixtureName("product-flavors");
 
-        gradleRunner("assembleProductionRelease").build();
+        gradleRunner("assembleProductionDebug").build();
+        assertThat(generatedFile(), is(expectedFile()));
 
-        assertThat(generatedFile("production/debug"), is(expectedFile()));
-        assertThat(generatedFile("production/release"), is(expectedFile()));
+        gradleRunner("clean").build();
+
+        gradleRunner("assembleProductionRelease").build();
+        assertThat(generatedFile(), is(expectedFile()));
+
     }
 
     @Test
     public void aProjectSetupWithInheritedProductFlavors_generatesCorrectFeaturesFilePerFlavor() throws Exception {
         setupFromFixtureName("inheritance");
 
-        gradleRunner("assembleProductionRelease").build();
+        gradleRunner("assembleProductionDebug").build();
+        assertThat(generatedFile(), is(expectedFile()));
 
-        assertThat(generatedFile("production/debug"), is(expectedFile()));
-        assertThat(generatedFile("production/release"), is(expectedFile()));
+        gradleRunner("clean").build();
+
+        gradleRunner("assembleProductionRelease").build();
+        assertThat(generatedFile(), is(expectedFile()));
     }
 
     @Test
@@ -90,13 +99,12 @@ public class FixturesTest {
     }
 
     private File folderForFixtureName(final String fixtureName) throws Exception {
-        return new File(Resources.getResource("fixtures/" + fixtureName).toURI());
+        return new File(Resources.getResource("fixtures" + File.separator + fixtureName).toURI());
     }
 
-    private String generatedFile(final String variant) throws Exception {
+    private String generatedFile() throws Exception {
         return FileUtils.readFileToString(new File(temporaryFolder.getRoot() +
-                "/build/generated/source/buildConfig/" + variant +
-                "/com/github/michaelengland/fliptheswitch/Features.java"));
+                "/build/generated/source/fliptheswitch/com/github/michaelengland/fliptheswitch/Features.java"));
     }
 
     private String expectedFile() throws Exception {
@@ -122,6 +130,7 @@ public class FixturesTest {
         List<String> gradleArguments = new ArrayList<>();
         gradleArguments.add(buildCommand);
         gradleArguments.add("--stacktrace");
+        gradleArguments.add("--info");
         return gradleArguments;
     }
 }

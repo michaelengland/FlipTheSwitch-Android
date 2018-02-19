@@ -33,7 +33,7 @@ open class FlipTheSwitchPlugin : Plugin<Project> {
         val productFlavorNames = getProductFlavorNames(project)
         getProductFlavorConfigs(project).forEach {
             if (it.name !in productFlavorNames) {
-                throw GradleException ("You cannot have feature overrides for a non-existent product flavor (${it.name})")
+                throw GradleException("You cannot have feature overrides for a non-existent product flavor (${it.name})")
             }
         }
     }
@@ -45,8 +45,9 @@ open class FlipTheSwitchPlugin : Plugin<Project> {
             task.features = getFeatures(project, it)
             task.description = "Generate features class for ${it.name}"
             task.buildDirectory = featuresFile(project)
+            it.addJavaSourceFoldersToModel(task.buildDirectory)
             generateAllTask.dependsOn(task)
-            it.registerJavaGeneratingTask(task, task.buildDirectory)
+            it.preBuild.dependsOn(task)
         }
     }
 
@@ -95,7 +96,7 @@ open class FlipTheSwitchPlugin : Plugin<Project> {
             getDefaultConfig(project).map { it.name }
 
     private fun featuresFile(project: Project) =
-            File("${project.buildDir}/generated/source/fliptheswitch")
+            File(listOf(project.buildDir, "generated", "source", "fliptheswitch").joinToString(separator = File.separator))
 
     private fun getApplicationVariants(project: Project) =
             findAndroidAppExtension(project).applicationVariants
