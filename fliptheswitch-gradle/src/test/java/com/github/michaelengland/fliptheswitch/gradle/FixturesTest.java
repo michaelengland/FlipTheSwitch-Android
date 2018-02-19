@@ -4,6 +4,7 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.gradle.testkit.runner.GradleRunner;
 import org.junit.Rule;
 import org.junit.Test;
@@ -27,12 +28,12 @@ public class FixturesTest {
         setupFromFixtureName("simple");
 
         gradleRunner("assembleDebug").build();
-        assertThat(generatedFile(), is(expectedFile()));
+        assertThat(generatedFile("debug"), is(expectedFile()));
 
         gradleRunner("clean").build();
 
         gradleRunner("assembleRelease").build();
-        assertThat(generatedFile(), is(expectedFile()));
+        assertThat(generatedFile("release"), is(expectedFile()));
     }
 
     @Test
@@ -40,13 +41,12 @@ public class FixturesTest {
         setupFromFixtureName("product-flavors");
 
         gradleRunner("assembleProductionDebug").build();
-        assertThat(generatedFile(), is(expectedFile()));
+        assertThat(generatedFile("production", "debug"), is(expectedFile()));
 
         gradleRunner("clean").build();
 
         gradleRunner("assembleProductionRelease").build();
-        assertThat(generatedFile(), is(expectedFile()));
-
+        assertThat(generatedFile("production", "release"), is(expectedFile()));
     }
 
     @Test
@@ -54,12 +54,12 @@ public class FixturesTest {
         setupFromFixtureName("inheritance");
 
         gradleRunner("assembleProductionDebug").build();
-        assertThat(generatedFile(), is(expectedFile()));
+        assertThat(generatedFile("production", "debug"), is(expectedFile()));
 
         gradleRunner("clean").build();
 
         gradleRunner("assembleProductionRelease").build();
-        assertThat(generatedFile(), is(expectedFile()));
+        assertThat(generatedFile("production", "release"), is(expectedFile()));
     }
 
     @Test
@@ -102,9 +102,11 @@ public class FixturesTest {
         return new File(Resources.getResource("fixtures" + File.separator + fixtureName).toURI());
     }
 
-    private String generatedFile() throws Exception {
+    private String generatedFile(final String... variantFolders) throws Exception {
         return FileUtils.readFileToString(new File(temporaryFolder.getRoot() +
-                "/build/generated/source/fliptheswitch/com/github/michaelengland/fliptheswitch/Features.java"));
+                "/build/generated/source/fliptheswitch/" +
+                StringUtils.join(variantFolders, '/') +
+                "/com/github/michaelengland/fliptheswitch/Features.java"));
     }
 
     private String expectedFile() throws Exception {

@@ -44,7 +44,7 @@ open class FlipTheSwitchPlugin : Plugin<Project> {
             val task = project.tasks.create("$createFeaturesTaskPrefix${it.name.capitalize()}$createFeaturesTaskSuffix", CreateFeaturesTask::class.java)
             task.features = getFeatures(project, it)
             task.description = "Generate features class for ${it.name}"
-            task.buildDirectory = featuresFile(project)
+            task.buildDirectory = featuresFile(project, it)
             it.addJavaSourceFoldersToModel(task.buildDirectory)
             generateAllTask.dependsOn(task)
             it.preBuild.dependsOn(task)
@@ -95,8 +95,8 @@ open class FlipTheSwitchPlugin : Plugin<Project> {
     private fun getFeatureNames(project: Project) =
             getDefaultConfig(project).map { it.name }
 
-    private fun featuresFile(project: Project) =
-            File(listOf(project.buildDir, "generated", "source", "fliptheswitch").joinToString(separator = File.separator))
+    private fun featuresFile(project: Project, applicationVariant: ApplicationVariant) =
+            File(listOf(project.buildDir, "generated", "source", "fliptheswitch", applicationVariant.dirName).joinToString(separator = File.separator))
 
     private fun getApplicationVariants(project: Project) =
             findAndroidAppExtension(project).applicationVariants
