@@ -95,7 +95,11 @@ public class FixturesTest {
 
     private void setupFromFixtureName(final String fixtureName) throws Exception {
         FileUtils.copyDirectory(folderForFixtureName(fixtureName), temporaryFolder.getRoot());
-        FileUtils.copyDirectory(sourceFolder(), temporaryFolder.newFolder("src"));
+        File src = temporaryFolder.newFolder("src");
+        File libs = temporaryFolder.newFolder("libs");
+        FileUtils.copyDirectory(sourceFolder(), src);
+        FileUtils.copyFileToDirectory(coreLib(), libs);
+        FileUtils.copyFileToDirectory(androidLib(), libs);
     }
 
     private File folderForFixtureName(final String fixtureName) throws Exception {
@@ -116,6 +120,14 @@ public class FixturesTest {
 
     private File sourceFolder() throws Exception {
         return new File(Resources.getResource("src").toURI());
+    }
+
+    private File androidLib() throws Exception {
+        return new File(System.getProperty("user.dir") + "/../fliptheswitch-android/build/outputs/aar/fliptheswitch-android-release.aar");
+    }
+
+    private File coreLib() throws Exception {
+        return new File(System.getProperty("user.dir") + "/../fliptheswitch-core/build/libs/fliptheswitch-core-0.1.0-SNAPSHOT.jar");
     }
 
     private List<File> pluginClasspaths() throws Exception {

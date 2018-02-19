@@ -50,3 +50,14 @@ features {
         }
     }
 }
+
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+dependencies {
+    compile fileTree(includes: ['*.jar'], dir: 'libs')
+    compile(name: 'fliptheswitch-android-release', ext: 'aar')
+}
