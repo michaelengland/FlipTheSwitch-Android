@@ -1,4 +1,10 @@
-apply plugin: 'groovy'
+buildscript {
+    dependencies {
+        classpath deps.kotlinPlugin
+    }
+}
+
+apply plugin: 'kotlin'
 apply plugin: 'maven'
 
 group = GROUP
@@ -23,10 +29,10 @@ task createClasspathManifest {
 
 dependencies {
     provided gradleApi()
-    provided localGroovy()
     android deps.androidPlugin
     compile project(':fliptheswitch-core')
     compile deps.javaPoet
+    compile deps.kotlinStdLib
     testCompile deps.junit
     testProvided gradleTestKit()
 
